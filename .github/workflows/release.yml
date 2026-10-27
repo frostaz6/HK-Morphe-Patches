@@ -28,8 +28,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if ! git rev-parse -q --verify refs/tags/v1.9.0 >/dev/null; then
-            gh api -X POST "repos/$GITHUB_REPOSITORY/git/refs" -f ref=refs/tags/v1.9.0 -f sha=637419bb845d8a197f0f06a8d2af9bb397b99440
-            git fetch origin refs/tags/v1.9.0:refs/tags/v1.9.0
+            git tag v1.9.0 637419bb845d8a197f0f06a8d2af9bb397b99440
+            git push origin refs/tags/v1.9.0
           fi
 
       - name: Setup Java
