@@ -2,9 +2,7 @@ name: Release
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
+  # Re-enable push once semantic-release has permission to create tags.
 
 jobs:
   release:
