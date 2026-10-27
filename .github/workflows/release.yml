@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - main
-      - dev
 
 jobs:
   release:
@@ -22,6 +21,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      # This fork starts at upstream 1.9.0 without the inherited tag.
+      # Establish the base so semantic-release produces 1.9.1, not 1.0.0.
+      - name: Seed fork version baseline
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if ! git rev-parse -q --verify refs/tags/v1.9.0 >/dev/null; then
+            gh api -X POST "repos/$GITHUB_REPOSITORY/git/refs" -f ref=refs/tags/v1.9.0 -f sha=637419bb845d8a197f0f06a8d2af9bb397b99440
+            git fetch origin refs/tags/v1.9.0:refs/tags/v1.9.0
+          fi
+
       - name: Setup Java
         uses: actions/setup-java@v5
         with:
@@ -34,7 +44,7 @@ jobs:
       - name: Build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew :patches:buildAndroid generatePatchesList clean
+        run: ./gradlew :patches:buildAndroid generatePatchesList --no-daemon
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
