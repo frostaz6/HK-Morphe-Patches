@@ -110,9 +110,9 @@ Some Morphe patches for apps I use.
 
 #### How to use these patches
 
-Click here to add these patches to Morphe: https://morphe.software/add-source?github=humzakh/HK-Morphe-Patches
+Click here to add these patches to Morphe: https://morphe.software/add-source?github=mcnannay/HK-Morphe-Patches
 
-Or manually add this repository url as a patch source in Morphe: https://github.com/humzakh/HK-Morphe-Patches
+Or manually add this repository url as a patch source in Morphe: https://github.com/mcnannay/HK-Morphe-Patches
 
 ### Contributing
 
