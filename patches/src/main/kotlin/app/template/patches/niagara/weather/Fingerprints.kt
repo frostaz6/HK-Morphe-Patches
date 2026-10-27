@@ -9,6 +9,9 @@ internal const val NIAGARA_WEATHER_CLASS_DESCRIPTOR =
 internal const val WEATHERKIT_CLASS_DESCRIPTOR =
     "Lapp/morphe/extension/niagara/WeatherKitExtension;"
 
+internal const val WEATHER_APP_CLASS_DESCRIPTOR =
+    "Lapp/morphe/extension/niagara/WeatherAppExtension;"
+
 /**
  * The weather manager's refresh. Its class is the weather manager.
  */
@@ -73,6 +76,13 @@ internal val fetchFromServerConstructorFingerprint = Fingerprint(
             method.parameterTypes.take(3).all { it == "Ljava/lang/Object;" } &&
             method.parameterTypes.last() == "I"
     }
+)
+
+/**
+ * The forecast's long press, which opens OpenWeather.
+ */
+internal val openWeatherAppFingerprint = Fingerprint(
+    strings = listOf("uk.co.openweather.MainActivity")
 )
 
 private fun extensionMethodFingerprint(name: String) = Fingerprint(

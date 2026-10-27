@@ -4,16 +4,21 @@ import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.instructions
+import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.smali.ExternalLabel
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
 private const val FORECAST_CLASS_DESCRIPTOR = "Lapp/morphe/extension/niagara/NiagaraWeather\$Forecast;"
+
+private val LAUNCH_PARAMETERS = listOf("Landroid/content/Intent;", "Landroid/content/Context;", "Landroid/view/View;")
 
 private fun MethodReference.smali() =
     "$definingClass->$name(${parameterTypes.joinToString("")})$returnType"
@@ -21,8 +26,8 @@ private fun MethodReference.smali() =
 private fun FieldReference.smali() = "$definingClass->$name:$type"
 
 /**
- * Routes Niagara's weather fetch through the NiagaraWeather extension. Source patches depend on this
- * and call [setWeatherSource].
+ * Routes Niagara's weather fetch through the NiagaraWeather extension, and makes the forecast's long
+ * press ask which app to open. Source patches depend on this and call [setWeatherSource].
  */
 internal val niagaraWeatherPatch = bytecodePatch {
     extendWith("extensions/niagara.mpe")
@@ -99,6 +104,25 @@ internal val niagaraWeatherPatch = bytecodePatch {
                     return-object v0
                 """,
                 ExternalLabel("fetch", getInstruction(fetchIndex))
+            )
+        }
+
+        // Swap the long press's OpenWeather launch for the app picker, which takes the same arguments.
+        openWeatherAppFingerprint.method.apply {
+            val intentIndex = instructions.indexOfFirst {
+                ((it as? ReferenceInstruction)?.reference as? StringReference)?.string == "uk.co.openweather.MainActivity"
+            }
+            val launchIndex = instructions.withIndex().first { (index, instruction) ->
+                index > intentIndex && instruction.opcode == Opcode.INVOKE_STATIC &&
+                    ((instruction as ReferenceInstruction).reference as MethodReference)
+                        .parameterTypes.map { it.toString() } == LAUNCH_PARAMETERS
+            }.index
+
+            val launch = getInstruction<FiveRegisterInstruction>(launchIndex)
+            replaceInstruction(
+                launchIndex,
+                "invoke-static { v${launch.registerC}, v${launch.registerD}, v${launch.registerE} }, " +
+                    "$WEATHER_APP_CLASS_DESCRIPTOR->open(${LAUNCH_PARAMETERS.joinToString("")})V"
             )
         }
     }
