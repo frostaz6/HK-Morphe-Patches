@@ -1,8 +1,6 @@
 name: Publish Sync patch bundle v1.9.1
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 jobs:

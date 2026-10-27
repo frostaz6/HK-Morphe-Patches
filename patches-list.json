@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "patches": [
     {
       "name": "Apple WeatherKit",
@@ -65,6 +65,63 @@
           "values": null
         }
       ]
+    },
+    {
+      "name": "Disable Sync for Lemmy bottom sheet",
+      "description": "Removes the startup warning that Sync for Reddit is shutting down and the Sync for Lemmy invitation.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.laurencedawson.reddit_sync",
+          "name": "Sync for Reddit",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": null,
+          "signatures": null,
+          "targets": [
+            {
+              "version": "v23.06.30-13:39",
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        },
+        {
+          "packageName": "com.laurencedawson.reddit_sync.pro",
+          "name": "Sync for Reddit Pro",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": null,
+          "signatures": null,
+          "targets": [
+            {
+              "version": "v23.06.30-13:39",
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        },
+        {
+          "packageName": "com.laurencedawson.reddit_sync.dev",
+          "name": "Sync for Reddit Dev",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": null,
+          "signatures": null,
+          "targets": [
+            {
+              "version": "v23.06.30-13:39",
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
     },
     {
       "name": "Fix \"Other Discussions\"",
@@ -241,63 +298,6 @@
       "options": []
     },
     {
-      "name": "Fix Reddit Video Links",
-      "description": "Fixes reddit video links (reddit.com/link/.../video) so they open in the native video player.",
-      "default": true,
-      "dependencies": [],
-      "compatiblePackages": [
-        {
-          "packageName": "com.laurencedawson.reddit_sync",
-          "name": "Sync for Reddit",
-          "description": null,
-          "apkFileType": null,
-          "appIconColor": null,
-          "signatures": null,
-          "targets": [
-            {
-              "version": "v23.06.30-13:39",
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        },
-        {
-          "packageName": "com.laurencedawson.reddit_sync.pro",
-          "name": "Sync for Reddit Pro",
-          "description": null,
-          "apkFileType": null,
-          "appIconColor": null,
-          "signatures": null,
-          "targets": [
-            {
-              "version": "v23.06.30-13:39",
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        },
-        {
-          "packageName": "com.laurencedawson.reddit_sync.dev",
-          "name": "Sync for Reddit Dev",
-          "description": null,
-          "apkFileType": null,
-          "appIconColor": null,
-          "signatures": null,
-          "targets": [
-            {
-              "version": "v23.06.30-13:39",
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
       "name": "Fix imgur links",
       "description": "Fixes imgur.com/a/ links to properly display in the image viewer.",
       "default": true,
@@ -414,6 +414,120 @@
     {
       "name": "Fix r/random",
       "description": "Restores random subreddit functionality by fetching from an alternative API.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.laurencedawson.reddit_sync",
+          "name": "Sync for Reddit",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": null,
+          "signatures": null,
+          "targets": [
+            {
+              "version": "v23.06.30-13:39",
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        },
+        {
+          "packageName": "com.laurencedawson.reddit_sync.pro",
+          "name": "Sync for Reddit Pro",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": null,
+          "signatures": null,
+          "targets": [
+            {
+              "version": "v23.06.30-13:39",
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        },
+        {
+          "packageName": "com.laurencedawson.reddit_sync.dev",
+          "name": "Sync for Reddit Dev",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": null,
+          "signatures": null,
+          "targets": [
+            {
+              "version": "v23.06.30-13:39",
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Fix Reddit shared post links",
+      "description": "Resolves Reddit /r/.../s/... share links to real post URLs so links to other posts open inside Sync.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.laurencedawson.reddit_sync",
+          "name": "Sync for Reddit",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": null,
+          "signatures": null,
+          "targets": [
+            {
+              "version": "v23.06.30-13:39",
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        },
+        {
+          "packageName": "com.laurencedawson.reddit_sync.pro",
+          "name": "Sync for Reddit Pro",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": null,
+          "signatures": null,
+          "targets": [
+            {
+              "version": "v23.06.30-13:39",
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        },
+        {
+          "packageName": "com.laurencedawson.reddit_sync.dev",
+          "name": "Sync for Reddit Dev",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": null,
+          "signatures": null,
+          "targets": [
+            {
+              "version": "v23.06.30-13:39",
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Fix Reddit Video Links",
+      "description": "Fixes reddit video links (reddit.com/link/.../video) so they open in the native video player.",
       "default": true,
       "dependencies": [],
       "compatiblePackages": [

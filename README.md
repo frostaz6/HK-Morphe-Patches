@@ -5,7 +5,7 @@ Some Morphe patches for apps I use.
 ## Patches list
 
 <!-- PATCHES_START -->
-> **[v1.9.0](https://github.com/humzakh/HK-Morphe-Patches/releases/tag/v1.9.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;35 patches total
+> **[v1.9.1](https://github.com/mcnannay/HK-Morphe-Patches/releases/tag/v1.9.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;41 patches total
 <details>
 <summary>📦 Niagara Launcher&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -22,7 +22,7 @@ Some Morphe patches for apps I use.
 </details>
 
 <details>
-<summary>📦 Sync for Reddit&nbsp;&nbsp;•&nbsp;&nbsp;11 patches</summary>
+<summary>📦 Sync for Reddit&nbsp;&nbsp;•&nbsp;&nbsp;13 patches</summary>
 <br>
 
 **🎯 Supported versions:**
@@ -32,10 +32,12 @@ Some Morphe patches for apps I use.
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
 |----------|----------------|-----------|
+| [Disable Sync for Lemmy bottom sheet](#disable-sync-for-lemmy-bottom-sheet) | Removes the startup warning that Sync for Reddit is shutting down and the Sync for Lemmy invitation. |  |
 | [Fix "Other Discussions"](#fix-other-discussions) | Fixes the "Other Discussions" feature. |  |
 | [Fix "Restore Comment"](#fix-restore-comment) | Fixes the "Restore Comment" feature (requires Sync Ultra) by fetching from an alternative API. Also includes UI changes to make this feature more accessible. |  |
 | [Fix Image Post Selftext](#fix-image-post-selftext) | Fixes selftext in image posts to properly render Markdown. |  |
 | [Fix Reddit Video Links](#fix-reddit-video-links) | Fixes reddit video links (reddit.com/link/.../video) so they open in the native video player. |  |
+| [Fix Reddit shared post links](#fix-reddit-shared-post-links) | Resolves Reddit /r/.../s/... share links to real post URLs so links to other posts open inside Sync. |  |
 | [Fix imgur links](#fix-imgur-links) | Fixes imgur.com/a/ links to properly display in the image viewer. |  |
 | [Fix inline images](#fix-inline-images) | Fixes images in text posts showing as plain links instead of rendering inline. Also adds captions below the images where applicable. |  |
 | [Fix r/random](#fix-r-random) | Restores random subreddit functionality by fetching from an alternative API. |  |
@@ -47,7 +49,7 @@ Some Morphe patches for apps I use.
 </details>
 
 <details>
-<summary>📦 Sync for Reddit Pro&nbsp;&nbsp;•&nbsp;&nbsp;11 patches</summary>
+<summary>📦 Sync for Reddit Pro&nbsp;&nbsp;•&nbsp;&nbsp;13 patches</summary>
 <br>
 
 **🎯 Supported versions:**
@@ -57,10 +59,12 @@ Some Morphe patches for apps I use.
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
 |----------|----------------|-----------|
+| [Disable Sync for Lemmy bottom sheet](#disable-sync-for-lemmy-bottom-sheet) | Removes the startup warning that Sync for Reddit is shutting down and the Sync for Lemmy invitation. |  |
 | [Fix "Other Discussions"](#fix-other-discussions) | Fixes the "Other Discussions" feature. |  |
 | [Fix "Restore Comment"](#fix-restore-comment) | Fixes the "Restore Comment" feature (requires Sync Ultra) by fetching from an alternative API. Also includes UI changes to make this feature more accessible. |  |
 | [Fix Image Post Selftext](#fix-image-post-selftext) | Fixes selftext in image posts to properly render Markdown. |  |
 | [Fix Reddit Video Links](#fix-reddit-video-links) | Fixes reddit video links (reddit.com/link/.../video) so they open in the native video player. |  |
+| [Fix Reddit shared post links](#fix-reddit-shared-post-links) | Resolves Reddit /r/.../s/... share links to real post URLs so links to other posts open inside Sync. |  |
 | [Fix imgur links](#fix-imgur-links) | Fixes imgur.com/a/ links to properly display in the image viewer. |  |
 | [Fix inline images](#fix-inline-images) | Fixes images in text posts showing as plain links instead of rendering inline. Also adds captions below the images where applicable. |  |
 | [Fix r/random](#fix-r-random) | Restores random subreddit functionality by fetching from an alternative API. |  |
@@ -72,7 +76,7 @@ Some Morphe patches for apps I use.
 </details>
 
 <details>
-<summary>📦 Sync for Reddit Dev&nbsp;&nbsp;•&nbsp;&nbsp;11 patches</summary>
+<summary>📦 Sync for Reddit Dev&nbsp;&nbsp;•&nbsp;&nbsp;13 patches</summary>
 <br>
 
 **🎯 Supported versions:**
@@ -82,10 +86,12 @@ Some Morphe patches for apps I use.
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
 |----------|----------------|-----------|
+| [Disable Sync for Lemmy bottom sheet](#disable-sync-for-lemmy-bottom-sheet) | Removes the startup warning that Sync for Reddit is shutting down and the Sync for Lemmy invitation. |  |
 | [Fix "Other Discussions"](#fix-other-discussions) | Fixes the "Other Discussions" feature. |  |
 | [Fix "Restore Comment"](#fix-restore-comment) | Fixes the "Restore Comment" feature (requires Sync Ultra) by fetching from an alternative API. Also includes UI changes to make this feature more accessible. |  |
 | [Fix Image Post Selftext](#fix-image-post-selftext) | Fixes selftext in image posts to properly render Markdown. |  |
 | [Fix Reddit Video Links](#fix-reddit-video-links) | Fixes reddit video links (reddit.com/link/.../video) so they open in the native video player. |  |
+| [Fix Reddit shared post links](#fix-reddit-shared-post-links) | Resolves Reddit /r/.../s/... share links to real post URLs so links to other posts open inside Sync. |  |
 | [Fix imgur links](#fix-imgur-links) | Fixes imgur.com/a/ links to properly display in the image viewer. |  |
 | [Fix inline images](#fix-inline-images) | Fixes images in text posts showing as plain links instead of rendering inline. Also adds captions below the images where applicable. |  |
 | [Fix r/random](#fix-r-random) | Restores random subreddit functionality by fetching from an alternative API. |  |
