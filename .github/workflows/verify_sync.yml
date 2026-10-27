@@ -1,0 +1,31 @@
+name: Verify Sync patches
+
+on:
+  push:
+    branches:
+      - fix/sync-startup-and-share-links
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build patch bundle
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./gradlew :patches:buildAndroid --no-daemon --stacktrace
+      - name: Upload compiled patches
+        uses: actions/upload-artifact@v4
+        with:
+          name: sync-patches-test
+          path: patches/build/libs/*.mpp
+          if-no-files-found: error
