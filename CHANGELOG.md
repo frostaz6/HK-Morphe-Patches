@@ -1,3 +1,9 @@
+## [1.9.0-dev.2](https://github.com/humzakh/HK-Morphe-Patches/compare/v1.9.0-dev.1...v1.9.0-dev.2) (2026-10-27)
+
+### 🐛 Bug Fixes
+
+* Update Niagara weather long press for custom app selection ([6600b10](https://github.com/humzakh/HK-Morphe-Patches/commit/6600b10534c2cbebbb996d4caaceb6ef85a6b815))
+
 ## [1.9.0-dev.1](https://github.com/humzakh/HK-Morphe-Patches/compare/v1.8.0...v1.9.0-dev.1) (2026-10-27)
 
 ### ✨ New Features
