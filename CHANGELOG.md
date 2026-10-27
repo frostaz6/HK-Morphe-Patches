@@ -1,3 +1,9 @@
+## [1.9.0-dev.1](https://github.com/humzakh/HK-Morphe-Patches/compare/v1.8.0...v1.9.0-dev.1) (2026-10-27)
+
+### ✨ New Features
+
+* Add Apple WeatherKit patch for Niagara Launcher ([8733c52](https://github.com/humzakh/HK-Morphe-Patches/commit/8733c5238e131845d4d04104457832889f928f57))
+
 ## [1.8.0](https://github.com/humzakh/HK-Morphe-Patches/compare/v1.7.1...v1.8.0) (2026-08-16)
 
 ### ✨ New Features
