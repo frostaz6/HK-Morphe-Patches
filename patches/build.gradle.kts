@@ -1,13 +1,13 @@
-group = "app.mcnannay"
+group = "app.frostaz6"
 
 patches {
     about {
-        name = "HK Morphe Patches (mcnannay)"
+        name = "HK Morphe Patches (frostaz6)"
         description = "Patches for apps I like"
-        source = "https://github.com/mcnannay/HK-Morphe-Patches"
-        author = "mcnannay"
+        source = "https://github.com/frostaz6/HK-Morphe-Patches"
+        author = "frostaz6"
         contact = "na"
-        website = "https://github.com/mcnannay/HK-Morphe-Patches"
+        website = "https://github.com/frostaz6/HK-Morphe-Patches"
         license = "GPLv3"
     }
 }

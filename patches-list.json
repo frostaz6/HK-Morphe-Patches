@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "patches": [
     {
       "name": "Apple WeatherKit",
@@ -789,6 +789,15 @@
           "required": true,
           "type": "kotlin.String",
           "default": "org.quantumbadger.redreader/1.25.1",
+          "values": null
+        },
+        {
+          "key": "imgur-client-id",
+          "title": "Imgur client ID",
+          "description": "Sync's shared Imgur ID has exhausted its upload quota. Create a personal ID at https://api.imgur.com/oauth2/addclient and enter it here to restore uploads from posts and comments. This is separate from the Reddit OAuth client ID.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": "981c2f80e996ca3",
           "values": null
         }
       ]
