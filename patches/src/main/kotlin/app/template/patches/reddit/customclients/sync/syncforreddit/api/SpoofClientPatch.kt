@@ -3,6 +3,7 @@ package app.template.patches.reddit.customclients.sync.syncforreddit.api
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
+import app.morphe.patcher.patch.Option
 import app.morphe.patcher.patch.stringOption
 import com.android.tools.smali.dexlib2.Opcode
 import app.morphe.patcher.StringComparisonType
@@ -16,13 +17,16 @@ import java.util.Base64
 
 // Sync's shared Imgur client ID is rate-limited. Give each user an option
 // to use their own client ID without changing Reddit OAuth credentials.
-private const val ORIGINAL_IMGUR_CLIENT_ID = "981c2f80e996ca3"
+internal const val ORIGINAL_IMGUR_CLIENT_ID = "981c2f80e996ca3"
 private const val IMGUR_HEADER_PREFIX = "Client-ID "
 private val IMGUR_CLIENT_ID_PATTERN = Regex("^[0-9a-fA-F]{15,16}$")
 
+// Shared with Fix imgur links: one option controls upload and album-read credentials.
+internal lateinit var imgurClientIdOption: Option<String>
+
 @Suppress("unused")
 val spoofClientPatch = spoofClientPatch { clientIdOption, redirectUriOption, userAgentOption ->
-    val imgurClientIdOption = stringOption(
+    imgurClientIdOption = stringOption(
         "imgur-client-id",
         ORIGINAL_IMGUR_CLIENT_ID,
         null,
