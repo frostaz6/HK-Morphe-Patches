@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.9.3",
+  "version": "1.9.4",
   "patches": [
     {
       "name": "Apple WeatherKit",
@@ -299,7 +299,7 @@
     },
     {
       "name": "Fix imgur links",
-      "description": "Fixes Imgur album/image links and uses the personal Imgur client ID configured in Spoof client for reads.",
+      "description": "Shows public Imgur albums from embed and archived pages without an API key; retains direct image support.",
       "default": true,
       "dependencies": [],
       "compatiblePackages": [
@@ -794,7 +794,7 @@
         {
           "key": "imgur-client-id",
           "title": "Imgur client ID",
-          "description": "Sync's shared Imgur ID has exhausted its upload quota. Create a personal ID at https://api.imgur.com/oauth2/addclient and enter it here to restore uploads from posts and comments. This is separate from the Reddit OAuth client ID.",
+          "description": "Optional legacy Imgur client ID for single-image API lookups. Catbox uploads and public album viewing work without an Imgur ID. New Imgur API app registration may be unavailable.",
           "required": false,
           "type": "kotlin.String",
           "default": "981c2f80e996ca3",
@@ -805,6 +805,63 @@
     {
       "name": "Unlock Sync Ultra",
       "description": "Unlocks Sync Ultra Lifetime.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.laurencedawson.reddit_sync",
+          "name": "Sync for Reddit",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": null,
+          "signatures": null,
+          "targets": [
+            {
+              "version": "v23.06.30-13:39",
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        },
+        {
+          "packageName": "com.laurencedawson.reddit_sync.pro",
+          "name": "Sync for Reddit Pro",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": null,
+          "signatures": null,
+          "targets": [
+            {
+              "version": "v23.06.30-13:39",
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        },
+        {
+          "packageName": "com.laurencedawson.reddit_sync.dev",
+          "name": "Sync for Reddit Dev",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": null,
+          "signatures": null,
+          "targets": [
+            {
+              "version": "v23.06.30-13:39",
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Upload comment images to Catbox",
+      "description": "Uploads images to Catbox without an Imgur API key. Keeps Sync's normal image-link insertion.",
       "default": true,
       "dependencies": [],
       "compatiblePackages": [

@@ -5,7 +5,7 @@ Some Morphe patches for apps I use.
 ## Patches list
 
 <!-- PATCHES_START -->
-> **[v1.9.3](https://github.com/frostaz6/HK-Morphe-Patches/releases/tag/v1.9.3)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;41 patches total
+> **[v1.9.4](https://github.com/frostaz6/HK-Morphe-Patches/releases/tag/v1.9.4)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;41 patches total
 <details>
 <summary>📦 Niagara Launcher&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -22,7 +22,7 @@ Some Morphe patches for apps I use.
 </details>
 
 <details>
-<summary>📦 Sync for Reddit&nbsp;&nbsp;•&nbsp;&nbsp;13 patches</summary>
+<summary>📦 Sync for Reddit&nbsp;&nbsp;•&nbsp;&nbsp;14 patches</summary>
 <br>
 
 **🎯 Supported versions:**
@@ -38,12 +38,13 @@ Some Morphe patches for apps I use.
 | [Fix Image Post Selftext](#fix-image-post-selftext) | Fixes selftext in image posts to properly render Markdown. |  |
 | [Fix Reddit Video Links](#fix-reddit-video-links) | Fixes reddit video links (reddit.com/link/.../video) so they open in the native video player. |  |
 | [Fix Reddit shared post links](#fix-reddit-shared-post-links) | Resolves Reddit /r/.../s/... share links to real post URLs so links to other posts open inside Sync. |  |
-| [Fix imgur links](#fix-imgur-links) | Fixes Imgur album/image links and uses the personal Imgur client ID configured in Spoof client for reads. |  |
+| [Fix imgur links](#fix-imgur-links) | Shows public Imgur albums from embed and archived pages without an API key; retains direct image support. |  |
 | [Fix inline images](#fix-inline-images) | Fixes images in text posts showing as plain links instead of rendering inline. Also adds captions below the images where applicable. |  |
 | [Fix r/random](#fix-r-random) | Restores random subreddit functionality by fetching from an alternative API. |  |
 | [Hacker News Feed](#hacker-news-feed) | Integrates Hacker News (news.ycombinator.com) into Reddit Sync as a custom feed. |  |
 | [Predictive back gesture (Reddit Sync)](#predictive-back-gesture-reddit-sync) | Enables the predictive back gesture with fixes for Reddit Sync. |  |
 | [Spoof client](#spoof-client) | Restores functionality of the app by using custom client ID (default included). | • OAuth client ID<br>• Redirect URI<br>• User agent<br>• Imgur client ID |
+| [Upload comment images to Catbox](#upload-comment-images-to-catbox) | Uploads images to Catbox without an Imgur API key. Keeps Sync's normal image-link insertion. |  |
 | [Unlock Sync Ultra](#unlock-sync-ultra) | Unlocks Sync Ultra Lifetime. |  |
 
 </details>
@@ -163,3 +164,22 @@ This is not your Reddit OAuth client ID. The old album credential is
 preserved only as a backwards-compatible fallback when no personal
 Imgur ID has been entered. Deleted albums or unsupported Reddit galleries
 may still require separate fixes.
+
+### Sync image uploads and Imgur albums (v1.9.4)
+
+Enable **Upload comment images to Catbox** (default on), **Fix imgur links**,
+and **Spoof client** when patching the original Sync APK.
+
+- Uploads: Sync sends image data to [Catbox](https://catbox.moe/tools.php)
+  anonymously, and receives an image URL that its existing comment editor
+  inserts. This is **not** a Reddit-native image attachment. The link is
+  public; anonymous Catbox uploads cannot be deleted from your account.
+- Album viewing: Sync reads the public Imgur embed page and converts the
+  images to the gallery JSON its viewer expects. When necessary it tries the
+  public album page and then available Wayback Machine snapshots.
+- **No Imgur API client ID is needed** for either of these functions. The
+  legacy Imgur client ID option under Spoof client is now only for the separate
+  single-image API lookup path.
+- Deleted albums, age-restricted albums, blocks by either service, and Reddit
+  native galleries may still fail. Repatch a clean Sync APK rather than
+  reusing the already-patched APK.
