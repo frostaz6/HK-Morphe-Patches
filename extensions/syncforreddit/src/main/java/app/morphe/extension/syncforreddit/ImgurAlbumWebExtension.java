@@ -116,7 +116,7 @@ public final class ImgurAlbumWebExtension {
         return images;
     }
 
-    private static JSONArray embedded(String html, String marker) {
+    private static JSONArray embedded(String html, String marker) throws org.json.JSONException {
         int at = html.indexOf(marker);
         if (at < 0) return new JSONArray();
         int start = html.indexOf('{', at + marker.length());
