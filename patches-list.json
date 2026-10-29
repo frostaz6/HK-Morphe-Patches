@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.9.2",
+  "version": "1.9.3",
   "patches": [
     {
       "name": "Apple WeatherKit",
@@ -299,7 +299,7 @@
     },
     {
       "name": "Fix imgur links",
-      "description": "Fixes imgur.com/a/ links to properly display in the image viewer.",
+      "description": "Fixes Imgur album/image links and uses the personal Imgur client ID configured in Spoof client for reads.",
       "default": true,
       "dependencies": [],
       "compatiblePackages": [

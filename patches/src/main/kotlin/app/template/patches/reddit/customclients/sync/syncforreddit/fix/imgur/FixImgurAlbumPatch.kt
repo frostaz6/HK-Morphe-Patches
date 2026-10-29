@@ -1,6 +1,9 @@
 package app.template.patches.reddit.customclients.sync.syncforreddit.fix.imgur
 
 import app.template.patches.reddit.customclients.sync.syncforreddit.SyncForRedditCompatible
+import app.template.patches.reddit.customclients.sync.syncforreddit.api.ORIGINAL_IMGUR_CLIENT_ID
+import app.template.patches.reddit.customclients.sync.syncforreddit.api.imgurClientIdOption
+import app.template.patches.reddit.customclients.sync.syncforreddit.api.spoofClientPatch
 
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
@@ -29,13 +32,23 @@ private fun getUrlExtractionSmali(fieldClass: String, fieldName: String, baseUrl
 
 val fixImgurAlbumPatch = bytecodePatch(
     name = "Fix imgur links",
-    description = "Fixes imgur.com/a/ links to properly display in the image viewer.",
+    description = "Fixes Imgur album/image links and uses the personal Imgur client ID configured in Spoof client for reads.",
     default = true
 ) {
     compatibleWith(*SyncForRedditCompatible)
+    dependsOn(spoofClientPatch)
 
     execute {
-        val clientId = "546c25a59c58ad7" // official Imgur App Client ID
+        // Preserve the previous album-reading credential for users who have not
+        // configured a personal ID, to avoid a regression from v1.9.2.
+        // Once a personal ID is supplied, use it for both album/single-image
+        // reads and uploads (handled by Spoof client).
+        val selectedClientId = imgurClientIdOption.value ?: ORIGINAL_IMGUR_CLIENT_ID
+        val clientId = if (selectedClientId == ORIGINAL_IMGUR_CLIENT_ID) {
+            "546c25a59c58ad7"
+        } else {
+            selectedClientId
+        }
         
         externalGalleryUrlFingerprint.method.apply {
             addInstructions(0, getUrlExtractionSmali("Lg8/b;", "a", "https://api.imgur.com/3/album/"))
