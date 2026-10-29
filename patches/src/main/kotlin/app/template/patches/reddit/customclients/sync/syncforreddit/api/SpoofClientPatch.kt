@@ -31,9 +31,9 @@ val spoofClientPatch = spoofClientPatch { clientIdOption, redirectUriOption, use
         ORIGINAL_IMGUR_CLIENT_ID,
         null,
         "Imgur client ID",
-        "Sync's shared Imgur ID has exhausted its upload quota. Create a personal ID " +
-            "at https://api.imgur.com/oauth2/addclient and enter it here to restore uploads " +
-            "from posts and comments. This is separate from the Reddit OAuth client ID.",
+        "Optional legacy Imgur client ID for single-image API lookups. " +
+            "Catbox uploads and public album viewing work without an Imgur ID. " +
+            "New Imgur API app registration may be unavailable.",
         false,
         validator = { value -> value != null && IMGUR_CLIENT_ID_PATTERN.matches(value) }
     )
