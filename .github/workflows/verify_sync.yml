@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - fix/sync-startup-and-share-links
+      - fix/sync-imgur-comment-uploads
   workflow_dispatch:
 
 jobs:

@@ -5,7 +5,7 @@ Some Morphe patches for apps I use.
 ## Patches list
 
 <!-- PATCHES_START -->
-> **[v1.9.1](https://github.com/mcnannay/HK-Morphe-Patches/releases/tag/v1.9.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;41 patches total
+> **[v1.9.2](https://github.com/frostaz6/HK-Morphe-Patches/releases/tag/v1.9.2)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;41 patches total
 <details>
 <summary>📦 Niagara Launcher&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -43,7 +43,7 @@ Some Morphe patches for apps I use.
 | [Fix r/random](#fix-r-random) | Restores random subreddit functionality by fetching from an alternative API. |  |
 | [Hacker News Feed](#hacker-news-feed) | Integrates Hacker News (news.ycombinator.com) into Reddit Sync as a custom feed. |  |
 | [Predictive back gesture (Reddit Sync)](#predictive-back-gesture-reddit-sync) | Enables the predictive back gesture with fixes for Reddit Sync. |  |
-| [Spoof client](#spoof-client) | Restores functionality of the app by using custom client ID (default included). | • OAuth client ID<br>• Redirect URI<br>• User agent |
+| [Spoof client](#spoof-client) | Restores functionality of the app by using custom client ID (default included). | • OAuth client ID<br>• Redirect URI<br>• User agent<br>• Imgur client ID |
 | [Unlock Sync Ultra](#unlock-sync-ultra) | Unlocks Sync Ultra Lifetime. |  |
 
 </details>
@@ -70,7 +70,7 @@ Some Morphe patches for apps I use.
 | [Fix r/random](#fix-r-random) | Restores random subreddit functionality by fetching from an alternative API. |  |
 | [Hacker News Feed](#hacker-news-feed) | Integrates Hacker News (news.ycombinator.com) into Reddit Sync as a custom feed. |  |
 | [Predictive back gesture (Reddit Sync)](#predictive-back-gesture-reddit-sync) | Enables the predictive back gesture with fixes for Reddit Sync. |  |
-| [Spoof client](#spoof-client) | Restores functionality of the app by using custom client ID (default included). | • OAuth client ID<br>• Redirect URI<br>• User agent |
+| [Spoof client](#spoof-client) | Restores functionality of the app by using custom client ID (default included). | • OAuth client ID<br>• Redirect URI<br>• User agent<br>• Imgur client ID |
 | [Unlock Sync Ultra](#unlock-sync-ultra) | Unlocks Sync Ultra Lifetime. |  |
 
 </details>
@@ -97,7 +97,7 @@ Some Morphe patches for apps I use.
 | [Fix r/random](#fix-r-random) | Restores random subreddit functionality by fetching from an alternative API. |  |
 | [Hacker News Feed](#hacker-news-feed) | Integrates Hacker News (news.ycombinator.com) into Reddit Sync as a custom feed. |  |
 | [Predictive back gesture (Reddit Sync)](#predictive-back-gesture-reddit-sync) | Enables the predictive back gesture with fixes for Reddit Sync. |  |
-| [Spoof client](#spoof-client) | Restores functionality of the app by using custom client ID (default included). | • OAuth client ID<br>• Redirect URI<br>• User agent |
+| [Spoof client](#spoof-client) | Restores functionality of the app by using custom client ID (default included). | • OAuth client ID<br>• Redirect URI<br>• User agent<br>• Imgur client ID |
 | [Unlock Sync Ultra](#unlock-sync-ultra) | Unlocks Sync Ultra Lifetime. |  |
 
 </details>
@@ -116,9 +116,28 @@ Some Morphe patches for apps I use.
 
 #### How to use these patches
 
-Click here to add these patches to Morphe: https://morphe.software/add-source?github=mcnannay/HK-Morphe-Patches
+Click here to add these patches to Morphe: https://morphe.software/add-source?github=frostaz6/HK-Morphe-Patches
 
-Or manually add this repository url as a patch source in Morphe: https://github.com/mcnannay/HK-Morphe-Patches
+Or manually add this repository url as a patch source in Morphe: https://github.com/frostaz6/HK-Morphe-Patches
+
+### Fixing images that fail to upload in Sync comments
+
+Sync uploads pictures attached to comments and posts via Imgur. Its built-in shared
+Imgur client ID can run out of upload quota, resulting in **Failed to upload image**.
+
+The **Spoof client** patch now has a separate **Imgur client ID** setting:
+
+1. Sign in to Imgur and open https://api.imgur.com/oauth2/addclient.
+2. Register an application using **OAuth 2 authorization without a callback URL**.
+3. Copy the **Client ID** (not the Client Secret).
+4. In Morphe, edit the **Spoof client** patch and paste it into **Imgur client ID**.
+5. Repatch a clean Sync APK. Keep your existing Reddit OAuth client ID, redirect URI,
+   and user agent unchanged.
+
+The old shared ID remains the default for backwards compatibility but usually
+cannot upload images. You must supply a personal Imgur client ID to fix uploads.
+This patch is limited to Imgur uploads; it does not enable Reddit's native image
+attachments in communities where those are unsupported.
 
 ### Contributing
 

@@ -3,6 +3,8 @@ package app.template.patches.reddit.customclients.sync.syncforreddit.api
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
+import app.morphe.patcher.patch.stringOption
+import com.android.tools.smali.dexlib2.Opcode
 import app.morphe.patcher.StringComparisonType
 import app.morphe.patches.all.misc.string.replaceStringPatch
 import app.template.patches.reddit.customclients.spoofClientPatch
@@ -12,8 +14,25 @@ import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import java.util.Base64
 
+// Sync's shared Imgur client ID is rate-limited. Give each user an option
+// to use their own client ID without changing Reddit OAuth credentials.
+private const val ORIGINAL_IMGUR_CLIENT_ID = "981c2f80e996ca3"
+private const val IMGUR_HEADER_PREFIX = "Client-ID "
+private val IMGUR_CLIENT_ID_PATTERN = Regex("^[0-9a-fA-F]{15,16}$")
+
 @Suppress("unused")
 val spoofClientPatch = spoofClientPatch { clientIdOption, redirectUriOption, userAgentOption ->
+    val imgurClientIdOption = stringOption(
+        "imgur-client-id",
+        ORIGINAL_IMGUR_CLIENT_ID,
+        null,
+        "Imgur client ID",
+        "Sync's shared Imgur ID has exhausted its upload quota. Create a personal ID " +
+            "at https://api.imgur.com/oauth2/addclient and enter it here to restore uploads " +
+            "from posts and comments. This is separate from the Reddit OAuth client ID.",
+        false,
+        validator = { value -> value != null && IMGUR_CLIENT_ID_PATTERN.matches(value) }
+    )
     dependsOn(
         // Redirects from SSL to WWW domain are bugged causing auth problems.
         // Manually rewrite the URLs to fix this.
@@ -80,6 +99,27 @@ val spoofClientPatch = spoofClientPatch { clientIdOption, redirectUriOption, use
             )
         }
 
+        // endregion
+
+        // region Patch the Imgur upload Authorization header.
+        // The existing URL rewrite sends images directly to api.imgur.com, but
+        // retaining Sync's shared Client-ID makes that upload rate-limited.
+        imgurUploadHeadersFingerprint.method.apply {
+            val original = implementation?.instructions ?: error("Imgur upload method has no bytecode")
+            val headerIndex = original.indexOfFirst { instruction ->
+                instruction.opcode == Opcode.CONST_STRING &&
+                    (instruction as? ReferenceInstruction)?.reference.let { reference ->
+                        (reference as? StringReference)?.string?.startsWith(IMGUR_HEADER_PREFIX) == true
+                    }
+            }
+            check(headerIndex >= 0) { "Could not find the Imgur Client-ID upload header" }
+
+            val headerRegister = getInstruction<OneRegisterInstruction>(headerIndex).registerA
+            replaceInstruction(
+                headerIndex,
+                "const-string v$headerRegister, \"$IMGUR_HEADER_PREFIX${imgurClientIdOption.value}\""
+            )
+        }
         // endregion
     }
 }
