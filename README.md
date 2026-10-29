@@ -120,6 +120,25 @@ Click here to add these patches to Morphe: https://morphe.software/add-source?gi
 
 Or manually add this repository url as a patch source in Morphe: https://github.com/mcnannay/HK-Morphe-Patches
 
+### Fixing images that fail to upload in Sync comments
+
+Sync uploads pictures attached to comments and posts via Imgur. Its built-in shared
+Imgur client ID can run out of upload quota, resulting in **Failed to upload image**.
+
+The **Spoof client** patch now has a separate **Imgur client ID** setting:
+
+1. Sign in to Imgur and open https://api.imgur.com/oauth2/addclient.
+2. Register an application using **OAuth 2 authorization without a callback URL**.
+3. Copy the **Client ID** (not the Client Secret).
+4. In Morphe, edit the **Spoof client** patch and paste it into **Imgur client ID**.
+5. Repatch a clean Sync APK. Keep your existing Reddit OAuth client ID, redirect URI,
+   and user agent unchanged.
+
+The old shared ID remains the default for backwards compatibility but usually
+cannot upload images. You must supply a personal Imgur client ID to fix uploads.
+This patch is limited to Imgur uploads; it does not enable Reddit's native image
+attachments in communities where those are unsupported.
+
 ### Contributing
 
 Thank you for considering contributing to HK Morphe Patches.
