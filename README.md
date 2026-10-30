@@ -5,7 +5,7 @@ Some Morphe patches for apps I use.
 ## Patches list
 
 <!-- PATCHES_START -->
-> **[v1.9.4](https://github.com/frostaz6/HK-Morphe-Patches/releases/tag/v1.9.4)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;41 patches total
+> **[v1.9.5](https://github.com/frostaz6/HK-Morphe-Patches/releases/tag/v1.9.5)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;41 patches total
 <details>
 <summary>📦 Niagara Launcher&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -22,7 +22,7 @@ Some Morphe patches for apps I use.
 </details>
 
 <details>
-<summary>📦 Sync for Reddit&nbsp;&nbsp;•&nbsp;&nbsp;14 patches</summary>
+<summary>📦 Sync for Reddit&nbsp;&nbsp;•&nbsp;&nbsp;15 patches</summary>
 <br>
 
 **🎯 Supported versions:**
@@ -37,6 +37,7 @@ Some Morphe patches for apps I use.
 | [Fix "Restore Comment"](#fix-restore-comment) | Fixes the "Restore Comment" feature (requires Sync Ultra) by fetching from an alternative API. Also includes UI changes to make this feature more accessible. |  |
 | [Fix Image Post Selftext](#fix-image-post-selftext) | Fixes selftext in image posts to properly render Markdown. |  |
 | [Fix Reddit Video Links](#fix-reddit-video-links) | Fixes reddit video links (reddit.com/link/.../video) so they open in the native video player. |  |
+| [Fix Reddit galleries](#fix-reddit-galleries) | Fixes Reddit gallery URLs with query strings and recovers alternate gallery metadata where possible. |  |
 | [Fix Reddit shared post links](#fix-reddit-shared-post-links) | Resolves Reddit /r/.../s/... share links to real post URLs so links to other posts open inside Sync. |  |
 | [Fix imgur links](#fix-imgur-links) | Shows public Imgur albums from embed and archived pages without an API key; retains direct image support. |  |
 | [Fix inline images](#fix-inline-images) | Fixes images in text posts showing as plain links instead of rendering inline. Also adds captions below the images where applicable. |  |
@@ -183,3 +184,17 @@ and **Spoof client** when patching the original Sync APK.
 - Deleted albums, age-restricted albums, blocks by either service, and Reddit
   native galleries may still fail. Repatch a clean Sync APK rather than
   reusing the already-patched APK.
+
+### Reddit-native galleries (v1.9.5)
+
+**Fix Reddit galleries** handles Reddit-hosted image galleries such as
+`reddit.com/gallery/<post-id>` separately from Imgur. It normalizes
+gallery post IDs when query strings or trailing slashes are present and
+uses alternate `crosspost_parent_list`, `media_metadata`, and
+`preview.images` structures if the older Sync parser cannot find
+`gallery_data`. It does **not** alter Reddit OAuth credentials or bypass
+API rate limits or deleted/private posts.
+
+This patch is compiled but needs **on-device testing** with a known
+failing Reddit gallery. If Reddit denies access to the gallery API, no
+local metadata parser can restore missing response data.
