@@ -246,3 +246,19 @@ Fixes another Morphe patch error on the original Sync APK: `Could not find Reddi
 Prevents Morphe's `Collection is empty` exception from its inline-smali compiler on Sync `v23.06.30-13:39`. The gallery parser is now hooked using a directly constructed DEX `invoke-static/range` instruction, with no inline-smali assembly and no hardcoded response-field names. The previously unverified optional gallery-URL rewrite has also been dropped to reduce fragility. When no suitable gallery parser is found, the patch leaves that method untouched rather than aborting all patches.
 
 **Not a confirmed gallery-loading fix yet.** GitHub compilation does not execute the patcher on the real Sync APK. Install and gallery tests still need verification.
+
+### Experimental comparison: Imgur JSON API rollback
+
+A test-only branch restores the Imgur album handling present in **v1.9.3** and used by
+[ReSync](https://github.com/YCDumpling/sync):
+`https://api.imgur.com/3/album/<album-id>` with an Imgur `Client-ID` header and
+Sync's original `data.images[]` JSON parser. The v1.9.4+ web HTML embed scraper
+was removed from this branch. The existing *Spoof client* Imgur client-ID option
+is retained, and the *Choose image upload host* patch is unchanged.
+
+**Important:** This is a separate diagnostic experiment from the native Reddit
+gallery rollback in PR #11. Imgur albums (`imgur.com/a/...`) and Reddit-hosted
+posts (`reddit.com/gallery/...`) use different request classes. ReSync's
+published source has a placeholder Imgur client ID; it does not prove the
+Imgur API works without valid credentials. Compare a known Imgur album with
+v1.9.3 and this branch before any release is prepared.
