@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.9.5",
+  "version": "1.9.6",
   "patches": [
     {
       "name": "Apple WeatherKit",
@@ -62,6 +62,73 @@
           "required": true,
           "type": "kotlin.String",
           "default": null,
+          "values": null
+        }
+      ]
+    },
+    {
+      "name": "Choose image upload host",
+      "description": "Choose Reddit-hosted or Catbox uploads for Sync comment images. Catbox remains the default.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.laurencedawson.reddit_sync",
+          "name": "Sync for Reddit",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": null,
+          "signatures": null,
+          "targets": [
+            {
+              "version": "v23.06.30-13:39",
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        },
+        {
+          "packageName": "com.laurencedawson.reddit_sync.pro",
+          "name": "Sync for Reddit Pro",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": null,
+          "signatures": null,
+          "targets": [
+            {
+              "version": "v23.06.30-13:39",
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        },
+        {
+          "packageName": "com.laurencedawson.reddit_sync.dev",
+          "name": "Sync for Reddit Dev",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": null,
+          "signatures": null,
+          "targets": [
+            {
+              "version": "v23.06.30-13:39",
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "image-upload-host",
+          "title": "Image upload host",
+          "description": "catbox (anonymous, default) or reddit (experimental; needs logged-in Reddit OAuth session). Only single image uploads are supported.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": "catbox",
           "values": null
         }
       ]
@@ -862,63 +929,6 @@
     {
       "name": "Unlock Sync Ultra",
       "description": "Unlocks Sync Ultra Lifetime.",
-      "default": true,
-      "dependencies": [],
-      "compatiblePackages": [
-        {
-          "packageName": "com.laurencedawson.reddit_sync",
-          "name": "Sync for Reddit",
-          "description": null,
-          "apkFileType": null,
-          "appIconColor": null,
-          "signatures": null,
-          "targets": [
-            {
-              "version": "v23.06.30-13:39",
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        },
-        {
-          "packageName": "com.laurencedawson.reddit_sync.pro",
-          "name": "Sync for Reddit Pro",
-          "description": null,
-          "apkFileType": null,
-          "appIconColor": null,
-          "signatures": null,
-          "targets": [
-            {
-              "version": "v23.06.30-13:39",
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        },
-        {
-          "packageName": "com.laurencedawson.reddit_sync.dev",
-          "name": "Sync for Reddit Dev",
-          "description": null,
-          "apkFileType": null,
-          "appIconColor": null,
-          "signatures": null,
-          "targets": [
-            {
-              "version": "v23.06.30-13:39",
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Upload comment images to Catbox",
-      "description": "Uploads images to Catbox without an Imgur API key. Keeps Sync's normal image-link insertion.",
       "default": true,
       "dependencies": [],
       "compatiblePackages": [

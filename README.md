@@ -5,7 +5,7 @@ Some Morphe patches for apps I use.
 ## Patches list
 
 <!-- PATCHES_START -->
-> **[v1.9.5](https://github.com/frostaz6/HK-Morphe-Patches/releases/tag/v1.9.5)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;41 patches total
+> **[v1.9.6](https://github.com/frostaz6/HK-Morphe-Patches/releases/tag/v1.9.6)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;41 patches total
 <details>
 <summary>📦 Niagara Launcher&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -45,7 +45,7 @@ Some Morphe patches for apps I use.
 | [Hacker News Feed](#hacker-news-feed) | Integrates Hacker News (news.ycombinator.com) into Reddit Sync as a custom feed. |  |
 | [Predictive back gesture (Reddit Sync)](#predictive-back-gesture-reddit-sync) | Enables the predictive back gesture with fixes for Reddit Sync. |  |
 | [Spoof client](#spoof-client) | Restores functionality of the app by using custom client ID (default included). | • OAuth client ID<br>• Redirect URI<br>• User agent<br>• Imgur client ID |
-| [Upload comment images to Catbox](#upload-comment-images-to-catbox) | Uploads images to Catbox without an Imgur API key. Keeps Sync's normal image-link insertion. |  |
+| [Choose image upload host](#upload-comment-images-to-catbox) | Choose Reddit-hosted or Catbox uploads for Sync comment images. Catbox remains the default. |  |
 | [Unlock Sync Ultra](#unlock-sync-ultra) | Unlocks Sync Ultra Lifetime. |  |
 
 </details>
@@ -198,3 +198,30 @@ API rate limits or deleted/private posts.
 This patch is compiled but needs **on-device testing** with a known
 failing Reddit gallery. If Reddit denies access to the gallery API, no
 local metadata parser can restore missing response data.
+
+### Reddit-hosted image uploads (experimental, v1.9.6)
+
+When patching a clean Sync APK, open the **Choose image upload host**
+patch's options and set **Image upload host** to `reddit`. The default
+`catbox` continues to work without Reddit upload support. The host is
+chosen **when patching**, not from Sync's settings afterward. To change
+it, patch and install the APK again.
+
+The Reddit option requests an image upload lease at
+`oauth.reddit.com/api/media/asset.json` using the OAuth bearer from
+Sync's normal Reddit API requests. It then uploads a **single image**
+to the signed Reddit storage endpoint, returning the URL to Sync's
+existing comment-image link insertion. The OAuth token is kept only in
+memory and never sent to the storage endpoint or Catbox.
+
+**Limitations:** This is experimental and not yet tested on a live
+Reddit account. Reddit may return HTTP 401/403 under a third-party
+OAuth client. Reddit-hosted files can initially appear as Amazon S3
+URLs before Reddit processes them; the resulting Markdown link is not
+the same as Reddit's native embedded-comment image feature. Images
+over 20 MB, multiple images in a single upload, and video uploads are
+not implemented. An upload failure does not silently switch to Catbox.
+
+The upload-lease strategy was informed by the GPLv3-licensed
+[Apollo-Reborn native Reddit media uploader](https://github.com/Apollo-Reborn/Apollo-Reborn).
+All previous patches, including **Fix Reddit galleries**, are retained.
