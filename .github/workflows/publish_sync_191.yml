@@ -56,7 +56,7 @@ jobs:
             gh release create "v$VERSION" "$bundle#patches-$VERSION.mpp" \
               --target "$GITHUB_SHA" \
               --title "HK Morphe Patches v$VERSION" \
-              --notes "Removes the gallery patch's fragile smali injection; preserves Reddit/Catbox upload choices and previous fixes."
+              --notes "Rolls back unverified native Reddit gallery response rewriting to restore older Sync album handling; preserves image upload host choice and all other patches."
           fi
           # Remove the documentation-only file accidentally attached during v1.9.2 publishing.
           gh release delete-asset "v$VERSION" "patches-$VERSION-javadoc.mpp" --yes || true
