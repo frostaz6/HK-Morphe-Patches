@@ -25,13 +25,13 @@ private val galleryJsonParser = Fingerprint(
     strings = listOf("media_metadata", "gallery_data"),
 )
 
+// This method is static and may be obfuscated in Sync's original APK.
+// Match its literal endpoint, not the decompiled method name or a class-wide
+// fingerprint based on strings located in a different method.
 private val galleryUrlBuilder = Fingerprint(
-    name = "buildUrl",
+    strings = listOf("https://oauth.reddit.com/api/info.json?id=t3_"),
     parameters = listOf("Ljava/lang/String;"),
     returnType = "Ljava/lang/String;",
-    classFingerprint = Fingerprint(
-        strings = listOf("media_metadata", "gallery_data"),
-    ),
 )
 
 @Suppress("unused")
@@ -44,7 +44,9 @@ val fixRedditGalleriesPatch = bytecodePatch(
     extendWith("extensions/syncforreddit.mpe")
 
     execute {
-        galleryUrlBuilder.method.apply {
+        // URL compatibility is optional: if Sync's build differs, keep its
+        // original URL builder rather than failing the entire patch.
+        galleryUrlBuilder.methodOrNull?.apply {
             addInstructionsWithLabels(
                 0,
                 """
