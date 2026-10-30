@@ -27,12 +27,17 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install Android SDK 35
+      - name: Install Android SDK 35 using runner SDK
         run: |
-          sdkmanager --install "platforms;android-35" "build-tools;35.0.0" "platform-tools"
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          if command -v sdkmanager >/dev/null 2>&1; then
+            SDKMANAGER=$(command -v sdkmanager)
+          else
+            SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -path '*/bin/sdkmanager' -type f | sort -V | tail -1)
+          fi
+          test -n "$SDKMANAGER"
+          echo "sdkmanager: $SDKMANAGER"
+          "$SDKMANAGER" --install "platforms;android-35" "build-tools;35.0.0" "platform-tools"
           echo "sdk.dir=$ANDROID_HOME" > local.properties
 
       - name: Fix repository's Windows-specific JDK path
