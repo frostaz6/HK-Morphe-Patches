@@ -61,24 +61,36 @@ val fixRedditGalleriesPatch = bytecodePatch(
         }
 
         galleryJsonParser.method.apply {
-            val dataRead = implementation!!.instructions.indexOfFirst { instruction ->
+            // The actual NetworkResponse byte[] field name is obfuscated in
+            // some original Sync APKs. Match its *type*, not its decompiled
+            // "data" name or declaring-class path.
+            val dataRead = implementation?.instructions?.indexOfFirst { instruction ->
                 instruction.opcode == Opcode.IGET_OBJECT &&
                     (instruction as? ReferenceInstruction)?.reference.let { reference ->
-                        (reference as? FieldReference)?.let { field ->
-                            field.definingClass == "Lcom/android/volley/NetworkResponse;" &&
-                                field.name == "data" && field.type == "[B"
-                        } == true
+                        (reference as? FieldReference)?.type == "[B"
                     }
+            } ?: -1
+
+            if (dataRead >= 0) {
+                val register = getInstruction<OneRegisterInstruction>(dataRead).registerA
+                addInstructions(
+                    dataRead + 1,
+                    """
+                        invoke-static { v$register }, $EXT->normalizeGallery([B)[B
+                        move-result-object v$register
+                    """.trimIndent(),
+                )
+            } else {
+                // Some APK variants load response data through a helper rather
+                // than an IGET_OBJECT. Normalizing the actual response object
+                // at entry avoids brittle assumptions about those instructions.
+                // If reflection cannot access it, the extension safely leaves
+                // the original response untouched instead of failing patching.
+                addInstructions(
+                    0,
+                    "invoke-static { p1 }, $EXT->normalizeNetworkResponse(Ljava/lang/Object;)V",
+                )
             }
-            check(dataRead >= 0) { "Could not find Reddit gallery response data" }
-            val register = getInstruction<OneRegisterInstruction>(dataRead).registerA
-            addInstructions(
-                dataRead + 1,
-                """
-                    invoke-static { v$register }, $EXT->normalizeGallery([B)[B
-                    move-result-object v$register
-                """.trimIndent(),
-            )
         }
     }
 }
