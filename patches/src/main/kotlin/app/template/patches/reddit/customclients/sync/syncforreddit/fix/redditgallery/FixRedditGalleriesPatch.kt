@@ -19,19 +19,20 @@ private const val EXT = "Lapp/morphe/extension/syncforreddit/RedditGalleryExtens
  * Keep the existing OAuth request/response path and only repair URLs and JSON that
  * the legacy gallery parser would otherwise reject.
  */
+// Gallery parser method names can also be obfuscated in the released APK.
+// These JSON keys occur together in Sync's native Reddit gallery parser,
+// giving us a stable match without relying on reconstructed Java names.
 private val galleryJsonParser = Fingerprint(
-    name = "parseNetworkResponse",
-    parameters = listOf("Lcom/android/volley/NetworkResponse;"),
     strings = listOf("media_metadata", "gallery_data"),
 )
 
+// This method is static and may be obfuscated in Sync's original APK.
+// Match its literal endpoint, not the decompiled method name or a class-wide
+// fingerprint based on strings located in a different method.
 private val galleryUrlBuilder = Fingerprint(
-    name = "buildUrl",
+    strings = listOf("https://oauth.reddit.com/api/info.json?id=t3_"),
     parameters = listOf("Ljava/lang/String;"),
     returnType = "Ljava/lang/String;",
-    classFingerprint = Fingerprint(
-        strings = listOf("media_metadata", "gallery_data"),
-    ),
 )
 
 @Suppress("unused")
@@ -44,7 +45,9 @@ val fixRedditGalleriesPatch = bytecodePatch(
     extendWith("extensions/syncforreddit.mpe")
 
     execute {
-        galleryUrlBuilder.method.apply {
+        // URL compatibility is optional: if Sync's build differs, keep its
+        // original URL builder rather than failing the entire patch.
+        galleryUrlBuilder.methodOrNull?.apply {
             addInstructionsWithLabels(
                 0,
                 """
