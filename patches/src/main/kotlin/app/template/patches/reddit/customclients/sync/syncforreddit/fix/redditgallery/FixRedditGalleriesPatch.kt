@@ -2,16 +2,11 @@ package app.template.patches.reddit.customclients.sync.syncforreddit.fix.redditg
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
-import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.bytecodePatch
-import app.morphe.patcher.util.smali.ExternalLabel
 import app.template.patches.reddit.customclients.sync.syncforreddit.SyncForRedditCompatible
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction3rc
 import com.android.tools.smali.dexlib2.immutable.reference.ImmutableMethodReference
-
-private const val EXT = "Lapp/morphe/extension/syncforreddit/RedditGalleryExtension;"
 
 /**
  * Unlike Imgur albums, Reddit galleries load post details from the Reddit OAuth API.
@@ -32,40 +27,16 @@ private val galleryJsonParser = Fingerprint(
     },
 )
 
-// This method is static and may be obfuscated in Sync's original APK.
-// Match its literal endpoint, not the decompiled method name or a class-wide
-// fingerprint based on strings located in a different method.
-private val galleryUrlBuilder = Fingerprint(
-    strings = listOf("https://oauth.reddit.com/api/info.json?id=t3_"),
-    parameters = listOf("Ljava/lang/String;"),
-    returnType = "Ljava/lang/String;",
-)
-
 @Suppress("unused")
 val fixRedditGalleriesPatch = bytecodePatch(
     name = "Fix Reddit galleries",
-    description = "Fixes Reddit gallery URLs containing query strings and recovers gallery images from alternate post metadata where possible.",
+    description = "Repairs Reddit-native gallery metadata in older Sync, with a safe bytecode hook that does not use inline smali compilation.",
     default = true,
 ) {
     compatibleWith(*SyncForRedditCompatible)
     extendWith("extensions/syncforreddit.mpe")
 
     execute {
-        // URL compatibility is optional: if Sync's build differs, keep its
-        // original URL builder rather than failing the entire patch.
-        galleryUrlBuilder.methodOrNull?.apply {
-            addInstructionsWithLabels(
-                0,
-                """
-                    invoke-static { p0 }, $EXT->galleryApiUrl(Ljava/lang/String;)Ljava/lang/String;
-                    move-result-object v0
-                    if-eqz v0, :original_url
-                    return-object v0
-                """.trimIndent(),
-                ExternalLabel("original_url", getInstruction(0)),
-            )
-        }
-
         // Do not use InlineSmaliCompiler for this hook. It can fail to
         // assemble the method's parameters in some obfuscated APKs, causing
         // the "Collection is empty" exception. Build the range invoke
