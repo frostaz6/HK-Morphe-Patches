@@ -56,7 +56,7 @@ jobs:
             gh release create "v$VERSION" "$bundle#patches-$VERSION.mpp" \
               --target "$GITHUB_SHA" \
               --title "HK Morphe Patches v$VERSION" \
-              --notes "Improves Reddit-native gallery loading while preserving Catbox uploads, Imgur albums, and previous fixes."
+              --notes "Adds a selectable Reddit-hosted or Catbox image upload host for Sync; includes the previous gallery and link fixes."
           fi
           # Remove the documentation-only file accidentally attached during v1.9.2 publishing.
           gh release delete-asset "v$VERSION" "patches-$VERSION-javadoc.mpp" --yes || true
