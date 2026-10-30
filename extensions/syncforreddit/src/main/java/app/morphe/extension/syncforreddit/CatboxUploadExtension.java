@@ -8,7 +8,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -19,7 +18,7 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
- * Catbox uploads for Sync's original UploadImgurRequest.
+ * Configurable Catbox and Reddit-hosted uploads for Sync's original UploadImgurRequest.
  *
  * The request itself still invokes Sync's usual listener with an image URL,
  * so comment Markdown and the rest of Sync's editor remain unmodified.
@@ -51,7 +50,7 @@ public final class CatboxUploadExtension {
     }
 
     private static String requestUrl(Object request) {
-        if (request == null) return false;
+        if (request == null) return "";
         try {
             Method urlMethod = request.getClass().getMethod("getUrl");
             Object value = urlMethod.invoke(request);
