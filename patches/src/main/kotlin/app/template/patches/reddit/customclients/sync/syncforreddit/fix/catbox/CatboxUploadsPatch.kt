@@ -80,7 +80,7 @@ val catboxUploadsPatch = bytecodePatch(
         imgurUploadHeadersFingerprint.method.addInstructions(
             0,
             """
-                invoke-static {}, $EXT->uploadHeaders()Ljava/util/Map;
+                invoke-static { p0 }, $EXT->uploadHeaders(Ljava/lang/Object;)Ljava/util/Map;
                 move-result-object v0
                 return-object v0
             """.trimIndent(),
