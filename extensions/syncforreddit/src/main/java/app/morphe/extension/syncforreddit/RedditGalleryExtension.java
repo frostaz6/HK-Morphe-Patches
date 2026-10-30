@@ -4,6 +4,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URI;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -48,6 +50,34 @@ public final class RedditGalleryExtension {
             // Leave URLs we do not understand to Sync's original builder.
         }
         return null;
+    }
+
+    /**
+     * Some Sync builds obtain NetworkResponse.data via obfuscated fields or
+     * helper methods, so no stable IGET_OBJECT instruction can be located.
+     * Modify the response byte array before its parser begins; only recognize
+     * valid Reddit listing JSON and leave everything else untouched.
+     */
+    public static void normalizeNetworkResponse(Object response) {
+        if (response == null) return;
+        try {
+            for (Class<?> type = response.getClass(); type != null; type = type.getSuperclass()) {
+                for (Field field : type.getDeclaredFields()) {
+                    if (field.getType() != byte[].class || Modifier.isStatic(field.getModifiers())) continue;
+                    field.setAccessible(true);
+                    byte[] original = (byte[]) field.get(response);
+                    if (original == null || original.length == 0 || original.length > 4 * 1024 * 1024)
+                        continue;
+                    byte[] normalized = normalizeGallery(original);
+                    if (normalized != original) {
+                        field.set(response, normalized);
+                        return;
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+            // Never break a gallery request if a byte[] field is inaccessible.
+        }
     }
 
     /**
