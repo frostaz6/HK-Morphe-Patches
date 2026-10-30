@@ -6,6 +6,7 @@ import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLa
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.bytecodePatch
+import app.morphe.patcher.patch.stringOption
 import app.morphe.patcher.util.smali.ExternalLabel
 import app.template.patches.reddit.customclients.sync.syncforreddit.SyncForRedditCompatible
 import app.template.patches.reddit.customclients.sync.syncforreddit.api.imgurImageAPIFingerprint
@@ -36,28 +37,50 @@ private val uploadResponse = Fingerprint(
 
 @Suppress("unused")
 val catboxUploadsPatch = bytecodePatch(
-    name = "Upload comment images to Catbox",
-    description = "Uploads images to Catbox without an Imgur API key. Keeps Sync's normal image-link insertion.",
+    name = "Choose image upload host",
+    description = "Choose Reddit-hosted or Catbox uploads for Sync comment images. Catbox remains the default.",
     default = true,
 ) {
     extendWith("extensions/syncforreddit.mpe")
     dependsOn(spoofClientPatch)
     compatibleWith(*SyncForRedditCompatible)
 
+    val hostOption = stringOption(
+        "image-upload-host",
+        "catbox",
+        null,
+        "Image upload host",
+        "catbox (anonymous, default) or reddit (experimental; needs logged-in Reddit OAuth session). Only single image uploads are supported.",
+        false,
+        validator = { value -> value == "catbox" || value == "reddit" },
+    )
+
     execute {
+        val redditHost = hostOption.value == "reddit"
+        if (redditHost) {
+            Fingerprint(
+                strings = listOf("Authorization", "bearer "),
+                parameters = listOf("Ljava/lang/String;"),
+                returnType = "Ljava/util/HashMap;",
+            ).method.addInstructions(
+                0,
+                "invoke-static { p0 }, $EXT->captureBearer(Ljava/lang/String;)V",
+            )
+        }
+
         // The Spoof client patch has already rewritten this URL to api.imgur.com.
         // The original index remains stable after replaceInstruction.
         val urlIndex = imgurImageAPIFingerprint.stringMatches.first().index
         imgurImageAPIFingerprint.method.replaceInstruction(
             urlIndex,
-            "const-string v1, \"https://catbox.moe/user/api.php\"",
+            "const-string v1, \"${if (redditHost) "https://oauth.reddit.com/api/media/asset.json" else "https://catbox.moe/user/api.php"}\"",
         )
 
-        // NEVER send the old Imgur authorization or RapidAPI credentials to Catbox.
+        // Never send the original Imgur/RapidAPI credentials to either host.
         imgurUploadHeadersFingerprint.method.addInstructions(
             0,
             """
-                invoke-static {}, Ljava/util/Collections;->emptyMap()Ljava/util/Map;
+                invoke-static {}, $EXT->uploadHeaders()Ljava/util/Map;
                 move-result-object v0
                 return-object v0
             """.trimIndent(),
@@ -88,8 +111,8 @@ val catboxUploadsPatch = bytecodePatch(
             )
         }
 
-        // Catbox returns a URL string, not Imgur's {"data":{"link":...}}.
-        // Adapt the response bytes before Sync runs its existing JSON parser.
+        // Catbox returns a plain URL, Reddit returns a media lease.
+        // Adapt responses to Sync's existing JSON image link parser.
         uploadResponse.method.apply {
             val dataRead = implementation!!.instructions.indexOfFirst { instruction ->
                 instruction.opcode == Opcode.IGET_OBJECT &&
@@ -105,7 +128,7 @@ val catboxUploadsPatch = bytecodePatch(
             addInstructions(
                 dataRead + 1,
                 """
-                    invoke-static { v$register }, $EXT->wrapResponse([B)[B
+                    invoke-static { v$register, p0 }, $EXT->wrapResponse([BLjava/lang/Object;)[B
                     move-result-object v$register
                 """.trimIndent(),
             )
