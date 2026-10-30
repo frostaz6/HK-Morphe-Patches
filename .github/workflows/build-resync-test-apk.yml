@@ -1,0 +1,77 @@
+name: Build ReSync 1.0.3 login-fix test APK
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/build-resync-test-apk.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-resync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Check out pinned ReSync source
+        uses: actions/checkout@v4
+        with:
+          repository: YCDumpling/sync
+          ref: fcb3c6dd7534ea032571aab197834c37db4650ae
+          persist-credentials: false
+
+      - name: Check out isolated ReSync authentication overlay
+        uses: actions/checkout@v4
+        with:
+          repository: frostaz6/HK-Morphe-Patches
+          ref: test/build-resync-103-apk
+          path: resync-build-overlay
+          persist-credentials: false
+
+      - name: Apply ReSync login test changes
+        run: |
+          python3 resync-build-overlay/ci/resync-login-fix.py \
+            app/src/main/java/com/resync/app/auth/WebSessionManager.java
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Android SDK 35 using runner SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          if command -v sdkmanager >/dev/null 2>&1; then
+            SDKMANAGER=$(command -v sdkmanager)
+          else
+            SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -path '*/bin/sdkmanager' -type f | sort -V | tail -1)
+          fi
+          test -n "$SDKMANAGER"
+          echo "sdkmanager: $SDKMANAGER"
+          "$SDKMANAGER" --install "platforms;android-35" "build-tools;35.0.0" "platform-tools"
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+
+      - name: Fix repository's Windows-specific JDK path
+        run: |
+          sed -i '/^org\.gradle\.java\.home=/d' gradle.properties
+          chmod +x gradlew
+          java -version
+
+      - name: Set up Gradle build cache
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build ReSync debug APK
+        run: |
+          ./gradlew :app:assembleDebug --no-daemon --stacktrace
+          test -s app/build/outputs/apk/debug/app-debug.apk
+          sha256sum app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload test APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: resync-1.0.3-loginfix-test-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 30
