@@ -1,18 +1,12 @@
 package app.template.patches.reddit.customclients.sync.syncforreddit.fix.redditgallery
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
-import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
+import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
 import app.morphe.patcher.patch.bytecodePatch
-import app.morphe.patcher.util.smali.ExternalLabel
 import app.template.patches.reddit.customclients.sync.syncforreddit.SyncForRedditCompatible
 import com.android.tools.smali.dexlib2.Opcode
-import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
-import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
-import com.android.tools.smali.dexlib2.iface.reference.FieldReference
-
-private const val EXT = "Lapp/morphe/extension/syncforreddit/RedditGalleryExtension;"
+import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction3rc
+import com.android.tools.smali.dexlib2.immutable.reference.ImmutableMethodReference
 
 /**
  * Unlike Imgur albums, Reddit galleries load post details from the Reddit OAuth API.
@@ -24,71 +18,49 @@ private const val EXT = "Lapp/morphe/extension/syncforreddit/RedditGalleryExtens
 // giving us a stable match without relying on reconstructed Java names.
 private val galleryJsonParser = Fingerprint(
     strings = listOf("media_metadata", "gallery_data"),
-)
-
-// This method is static and may be obfuscated in Sync's original APK.
-// Match its literal endpoint, not the decompiled method name or a class-wide
-// fingerprint based on strings located in a different method.
-private val galleryUrlBuilder = Fingerprint(
-    strings = listOf("https://oauth.reddit.com/api/info.json?id=t3_"),
-    parameters = listOf("Ljava/lang/String;"),
-    returnType = "Ljava/lang/String;",
+    // Restrict to parsers that accept one object and return an object.
+    // Method names and Volley classes may be obfuscated in the original APK.
+    custom = { method, _ ->
+        method.parameterTypes.size == 1 &&
+            method.parameterTypes[0].toString().startsWith("L") &&
+            method.returnType.startsWith("L")
+    },
 )
 
 @Suppress("unused")
 val fixRedditGalleriesPatch = bytecodePatch(
     name = "Fix Reddit galleries",
-    description = "Fixes Reddit gallery URLs containing query strings and recovers gallery images from alternate post metadata where possible.",
+    description = "Repairs Reddit-native gallery metadata in older Sync, with a safe bytecode hook that does not use inline smali compilation.",
     default = true,
 ) {
     compatibleWith(*SyncForRedditCompatible)
     extendWith("extensions/syncforreddit.mpe")
 
     execute {
-        // URL compatibility is optional: if Sync's build differs, keep its
-        // original URL builder rather than failing the entire patch.
-        galleryUrlBuilder.methodOrNull?.apply {
-            addInstructionsWithLabels(
-                0,
-                """
-                    invoke-static { p0 }, $EXT->galleryApiUrl(Ljava/lang/String;)Ljava/lang/String;
-                    move-result-object v0
-                    if-eqz v0, :original_url
-                    return-object v0
-                """.trimIndent(),
-                ExternalLabel("original_url", getInstruction(0)),
-            )
-        }
-
-        galleryJsonParser.method.apply {
-            // The actual NetworkResponse byte[] field name is obfuscated in
-            // some original Sync APKs. Match its *type*, not its decompiled
-            // "data" name or declaring-class path.
-            val dataRead = implementation?.instructions?.indexOfFirst { instruction ->
-                instruction.opcode == Opcode.IGET_OBJECT &&
-                    (instruction as? ReferenceInstruction)?.reference.let { reference ->
-                        (reference as? FieldReference)?.type == "[B"
-                    }
-            } ?: -1
-
-            if (dataRead >= 0) {
-                val register = getInstruction<OneRegisterInstruction>(dataRead).registerA
-                addInstructions(
-                    dataRead + 1,
-                    """
-                        invoke-static { v$register }, $EXT->normalizeGallery([B)[B
-                        move-result-object v$register
-                    """.trimIndent(),
-                )
-            } else {
-                // Some APK variants load response data through a helper rather
-                // than an IGET_OBJECT. Normalizing the actual response object
-                // at entry avoids brittle assumptions about those instructions.
-                // If reflection cannot access it, the extension safely leaves
-                // the original response untouched instead of failing patching.
-                addInstructions(
+        // Do not use InlineSmaliCompiler for this hook. It can fail to
+        // assemble the method's parameters in some obfuscated APKs, causing
+        // the "Collection is empty" exception. Build the range invoke
+        // directly against the matched DEX method's existing registers.
+        galleryJsonParser.methodOrNull?.apply {
+            val impl = implementation
+            if (impl != null && parameters.size == 1 && impl.registerCount > 0) {
+                // The sole object argument is always the highest parameter
+                // register for both static and instance methods. A /range
+                // invoke also works when the register index exceeds 15.
+                val responseRegister = impl.registerCount - 1
+                addInstruction(
                     0,
-                    "invoke-static { p1 }, $EXT->normalizeNetworkResponse(Ljava/lang/Object;)V",
+                    BuilderInstruction3rc(
+                        Opcode.INVOKE_STATIC_RANGE,
+                        responseRegister,
+                        1,
+                        ImmutableMethodReference(
+                            "Lapp/morphe/extension/syncforreddit/RedditGalleryExtension;",
+                            "normalizeNetworkResponse",
+                            listOf("Ljava/lang/Object;"),
+                            "V",
+                        ),
+                    ),
                 )
             }
         }

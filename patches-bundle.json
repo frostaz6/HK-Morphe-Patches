@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-30T02:45:00",
-  "description": "v1.9.8: Fix Reddit gallery response-byte patch crash on obfuscated Sync APK; keep Reddit/Catbox upload choice.",
-  "download_url": "https://github.com/frostaz6/HK-Morphe-Patches/releases/download/v1.9.8/patches-1.9.8.mpp",
+  "created_at": "2026-10-30T03:15:00",
+  "description": "v1.9.9: Stop Morphe's Collection is empty crash in Fix Reddit galleries by eliminating inline smali injection. Preserve other Sync patches and upload options.",
+  "download_url": "https://github.com/frostaz6/HK-Morphe-Patches/releases/download/v1.9.9/patches-1.9.9.mpp",
   "signature_download_url": "",
-  "version": "1.9.8"
+  "version": "1.9.9"
 }

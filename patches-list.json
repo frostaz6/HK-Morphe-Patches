@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.9.8",
+  "version": "1.9.9",
   "patches": [
     {
       "name": "Apple WeatherKit",
@@ -537,7 +537,7 @@
     },
     {
       "name": "Fix Reddit galleries",
-      "description": "Handles obfuscated Reddit gallery response data with safe fallback, and repairs compatible gallery metadata.",
+      "description": "Repairs Reddit gallery metadata with a direct DEX hook; no fragile inline-smali injection.",
       "default": true,
       "dependencies": [],
       "compatiblePackages": [

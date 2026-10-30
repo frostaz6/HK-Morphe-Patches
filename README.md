@@ -5,7 +5,7 @@ Some Morphe patches for apps I use.
 ## Patches list
 
 <!-- PATCHES_START -->
-> **[v1.9.8](https://github.com/frostaz6/HK-Morphe-Patches/releases/tag/v1.9.8)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;41 patches total
+> **[v1.9.9](https://github.com/frostaz6/HK-Morphe-Patches/releases/tag/v1.9.9)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;41 patches total
 <details>
 <summary>📦 Niagara Launcher&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -37,7 +37,7 @@ Some Morphe patches for apps I use.
 | [Fix "Restore Comment"](#fix-restore-comment) | Fixes the "Restore Comment" feature (requires Sync Ultra) by fetching from an alternative API. Also includes UI changes to make this feature more accessible. |  |
 | [Fix Image Post Selftext](#fix-image-post-selftext) | Fixes selftext in image posts to properly render Markdown. |  |
 | [Fix Reddit Video Links](#fix-reddit-video-links) | Fixes reddit video links (reddit.com/link/.../video) so they open in the native video player. |  |
-| [Fix Reddit galleries](#fix-reddit-galleries) | Handles obfuscated Reddit gallery response data with safe fallback, and repairs compatible gallery metadata. |  |
+| [Fix Reddit galleries](#fix-reddit-galleries) | Repairs Reddit gallery metadata with a direct DEX hook; no fragile inline-smali injection. |  |
 | [Fix Reddit shared post links](#fix-reddit-shared-post-links) | Resolves Reddit /r/.../s/... share links to real post URLs so links to other posts open inside Sync. |  |
 | [Fix imgur links](#fix-imgur-links) | Shows public Imgur albums from embed and archived pages without an API key; retains direct image support. |  |
 | [Fix inline images](#fix-inline-images) | Fixes images in text posts showing as plain links instead of rendering inline. Also adds captions below the images where applicable. |  |
@@ -199,7 +199,7 @@ This patch is compiled but needs **on-device testing** with a known
 failing Reddit gallery. If Reddit denies access to the gallery API, no
 local metadata parser can restore missing response data.
 
-### Reddit-hosted image uploads (experimental, v1.9.8)
+### Reddit-hosted image uploads (experimental, v1.9.9)
 
 When patching a clean Sync APK, open the **Choose image upload host**
 patch's options and set **Image upload host** to `reddit`. The default
@@ -226,7 +226,7 @@ The upload-lease strategy was informed by the GPLv3-licensed
 [Apollo-Reborn native Reddit media uploader](https://github.com/Apollo-Reborn/Apollo-Reborn).
 All previous patches, including **Fix Reddit galleries**, are retained.
 
-### v1.9.8 — Fix Reddit gallery patcher failure
+### v1.9.9 — Fix Reddit gallery patcher failure
 
 Fixes a Morphe fingerprint failure when patching Sync v23.06.30-13:39:
 `Failed to match the fingerprint: ... name=buildUrl ...`. The builder is
@@ -237,6 +237,12 @@ active. Does not change the Reddit/Catbox upload host option.
 Note: compilation alone does not prove an APK can be patched successfully.
 Please test the complete patch set against a clean Sync APK.
 
-### v1.9.8 — Reddit gallery response compatibility
+### v1.9.9 — Reddit gallery response compatibility
 
 Fixes another Morphe patch error on the original Sync APK: `Could not find Reddit gallery response data`. The patched gallery method may read a `byte[]` field with an obfuscated name, so the patch now matches the field's type. If the response bytes are accessed indirectly, an optional reflective runtime fallback is inserted instead of failing the entire patch. This should permit the patch operation to complete on more APK variants; live gallery behavior still requires testing.
+
+### v1.9.9 — Fix Reddit galleries crash
+
+Prevents Morphe's `Collection is empty` exception from its inline-smali compiler on Sync `v23.06.30-13:39`. The gallery parser is now hooked using a directly constructed DEX `invoke-static/range` instruction, with no inline-smali assembly and no hardcoded response-field names. The previously unverified optional gallery-URL rewrite has also been dropped to reduce fragility. When no suitable gallery parser is found, the patch leaves that method untouched rather than aborting all patches.
+
+**Not a confirmed gallery-loading fix yet.** GitHub compilation does not execute the patcher on the real Sync APK. Install and gallery tests still need verification.
