@@ -19,9 +19,10 @@ private const val EXT = "Lapp/morphe/extension/syncforreddit/RedditGalleryExtens
  * Keep the existing OAuth request/response path and only repair URLs and JSON that
  * the legacy gallery parser would otherwise reject.
  */
+// Gallery parser method names can also be obfuscated in the released APK.
+// These JSON keys occur together in Sync's native Reddit gallery parser,
+// giving us a stable match without relying on reconstructed Java names.
 private val galleryJsonParser = Fingerprint(
-    name = "parseNetworkResponse",
-    parameters = listOf("Lcom/android/volley/NetworkResponse;"),
     strings = listOf("media_metadata", "gallery_data"),
 )
 
